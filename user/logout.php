@@ -3,86 +3,50 @@ session_start();
 session_unset();
 session_destroy();
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logged Out | E-Book System</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-
-    <style>
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #f8fafc;
-            background-image: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.1) 0, transparent 50%), 
-                              radial-gradient(at 100% 100%, rgba(244, 63, 94, 0.1) 0, transparent 50%);
-        }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-        }
-        .progress-bar {
-            animation: shrink 5s linear forwards;
-        }
-        @keyframes shrink {
-            from { width: 100%; }
-            to { width: 0%; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Logged Out | E-Library</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--gold:#c9a84c;--gold-light:#e8c96a;--border:rgba(255,255,255,0.07);}
+body{background:#0d0d0d;color:#f0ece4;font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:30px;}
+.wrap{max-width:400px;width:100%;text-align:center;}
+.icon-wrap{width:72px;height:72px;background:rgba(74,124,89,0.1);border:1px solid rgba(74,124,89,0.25);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:1.8rem;}
+.wrap h2{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:#fff;margin-bottom:8px;}
+.wrap p{font-size:0.8rem;color:rgba(255,255,255,0.38);margin-bottom:28px;line-height:1.7;}
+.card{background:#141920;border:1px solid var(--border);border-radius:10px;padding:28px;}
+.btn-login{display:block;background:var(--gold);color:#0d0d0d;font-weight:700;font-size:0.84rem;padding:13px;border-radius:7px;text-decoration:none;margin-bottom:10px;transition:background 0.2s;}
+.btn-login:hover{background:var(--gold-light);}
+.btn-home{display:block;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:rgba(255,255,255,0.5);font-weight:600;font-size:0.84rem;padding:13px;border-radius:7px;text-decoration:none;transition:all 0.2s;}
+.btn-home:hover{color:#fff;border-color:rgba(255,255,255,0.18);}
+.progress-wrap{margin-top:20px;}
+.progress-label{font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.2);margin-bottom:8px;}
+.progress-bar{height:2px;background:rgba(255,255,255,0.06);border-radius:1px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--gold);animation:shrink 5s linear forwards;}
+@keyframes shrink{from{width:100%;}to{width:0%;}}
+.time-stamp{margin-top:20px;font-size:0.65rem;color:rgba(255,255,255,0.15);letter-spacing:0.08em;}
+</style>
 </head>
-
-<body class="min-h-screen flex items-center justify-center p-6">
-
-    <div class="w-full max-w-[450px] text-center animate__animated animate__zoomIn">
-        
-        <div class="relative mb-8 inline-block">
-            <div class="w-24 h-24 rounded-3xl bg-emerald-500 text-white shadow-2xl shadow-emerald-200 flex items-center justify-center mx-auto transform rotate-12">
-                <i class="fa-solid fa-right-from-bracket text-4xl -ml-1"></i>
-            </div>
-            <div class="absolute -top-2 -right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg text-emerald-500 animate__animated animate__bounceIn animate__delay-1s">
-                <i class="fa-solid fa-check text-sm"></i>
-            </div>
-        </div>
-
-        <div class="glass-card rounded-[3rem] p-10 shadow-2xl shadow-slate-200/60">
-            <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Safe & Secure</h2>
-            <p class="text-slate-500 mt-3 font-medium px-4">You have been successfully logged out of the E-Book System.</p>
-
-            <div class="mt-10 space-y-4">
-                <a href="login.php" class="block w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-bold text-lg shadow-xl shadow-indigo-100 transition-all transform hover:-translate-y-1 active:scale-[0.98]">
-                    <i class="fa-solid fa-lock-open mr-2 text-sm"></i> Sign In Again
-                </a>
-                
-                <a href="index.php" class="block w-full py-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-2xl font-bold text-lg transition-all">
-                    <i class="fa-solid fa-house mr-2 text-sm text-slate-400"></i> Back to Home
-                </a>
-            </div>
-
-            <div class="mt-10 pt-6 border-t border-slate-100">
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3">Redirecting to Login</p>
-                <div class="w-full h-1 bg-slate-100 rounded-full overflow-hidden">
-                    <div class="h-full bg-indigo-500 progress-bar"></div>
-                </div>
-            </div>
-        </div>
-
-        <p class="mt-8 text-slate-400 text-[11px] font-bold uppercase tracking-widest">
-            Session Terminated &bull; <?php echo date('H:i:s'); ?>
-        </p>
+<body>
+<div class="wrap">
+  <div class="icon-wrap"><i class="fa-solid fa-right-from-bracket"></i></div>
+  <h2>Safe & Secure</h2>
+  <p>You've been successfully logged out of your E-Library account.</p>
+  <div class="card">
+    <a href="login.php" class="btn-login"><i class="fa-solid fa-lock-open" style="margin-right:7px;"></i>Sign In Again</a>
+    <a href="index.php" class="btn-home"><i class="fa-solid fa-house" style="margin-right:7px;opacity:0.5;"></i>Back to Home</a>
+    <div class="progress-wrap">
+      <div class="progress-label">Redirecting in 5s</div>
+      <div class="progress-bar"><div class="progress-fill"></div></div>
     </div>
-
-    <script>
-        // 5 seconds baad login.php par khud hi chala jayega
-        setTimeout(function(){
-            window.location.href = 'login.php';
-        }, 5000);
-    </script>
-
+  </div>
+  <div class="time-stamp">Session terminated · <?php echo date('H:i:s'); ?></div>
+</div>
+<script>setTimeout(function(){ window.location.href = 'login.php'; }, 5000);</script>
 </body>
 </html>

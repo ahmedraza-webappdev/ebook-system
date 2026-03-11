@@ -3,281 +3,279 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
 include("../config/db.php"); 
 include("navbar.php"); 
 $image_path = "../uploads/covers/";
-
-// --- FILTER LOGIC ---
 $filter = isset($_GET['filter']) ? mysqli_real_escape_string($conn, $_GET['filter']) : 'all';
 $search = isset($_GET['search']) ? mysqli_real_escape_string($conn, $_GET['search']) : '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EBook Library | Home</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <style>
-        html { scroll-behavior: smooth; }
-        :root { 
-            --primary: #6366f1; 
-            --dark: #0f172a; 
-            --dark-hover: #020617; 
-            --free: #10b981; 
-            --slate-100: #f1f5f9;
-        }
-        body { background: #f8fafc; font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; padding: 0; overflow-x: hidden; }
-        
-        .hero { 
-            background: linear-gradient(rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.8)), 
-                        url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1350&q=80');
-            background-size: cover; background-position: center; 
-            padding: 100px 20px; color: white; margin-bottom: 0;
-            border-radius: 0 0 50px 50px;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EBook Library | Home</title>
+<style>
+html{scroll-behavior:smooth;}
+.hero{position:relative;padding:110px 30px 90px;text-align:center;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%, rgba(201,168,76,0.08) 0%, transparent 70%),url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1400&q=60');background-size:cover;background-position:center;opacity:0.18;z-index:0;}
+.hero::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(13,13,13,0.5) 0%,#0d0d0d 100%);z-index:1;}
+.hero .hc{position:relative;z-index:2;max-width:760px;margin:0 auto;}
+.hero .eyebrow{font-size:0.65rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:20px;display:block;}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.6rem,6vw,4.2rem);font-weight:700;color:#fff;line-height:1.12;margin-bottom:20px;}
+.hero h1 em{color:var(--gold);font-style:normal;}
+.hero p{color:rgba(255,255,255,0.45);font-size:1rem;max-width:520px;margin:0 auto 36px;line-height:1.7;}
+.search-form{display:flex;max-width:520px;margin:0 auto;background:#1c2333;border:1px solid rgba(255,255,255,0.1);border-radius:8px;overflow:hidden;}
+.search-form input{flex:1;background:none;border:none;padding:13px 18px;color:#fff;font-size:0.85rem;font-family:'DM Sans',sans-serif;outline:none;}
+.search-form input::placeholder{color:rgba(255,255,255,0.28);}
+.search-form button{background:var(--gold);border:none;padding:0 22px;color:#0d0d0d;cursor:pointer;font-weight:700;font-size:0.8rem;transition:background 0.2s;}
+.search-form button:hover{background:var(--gold-light);}
 
-        .stats-bar { margin-top: -50px; position: relative; z-index: 10; }
-        .stat-card { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.02); }
+.stats-row{max-width:1200px;margin:-1px auto 0;padding:0 30px;display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);}
+.stat-box{background:#141920;padding:24px 30px;display:flex;align-items:center;gap:16px;}
+.stat-icon{width:42px;height:42px;background:rgba(201,168,76,0.08);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:1rem;flex-shrink:0;}
+.stat-num{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;color:#fff;line-height:1;}
+.stat-lbl{font-size:0.7rem;color:var(--muted);margin-top:2px;letter-spacing:0.04em;}
 
-        .cat-card { 
-            background: white; border-radius: 20px; padding: 20px; text-align: center;
-            transition: 0.3s; cursor: pointer; border: 1px solid transparent;
-        }
-        .cat-card:hover { border-color: var(--primary); background: #f5f3ff; transform: translateY(-5px); }
-        .cat-icon { width: 60px; height: 60px; background: #eef2ff; color: var(--primary); border-radius: 15px; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 1.5rem; }
+section.sec{max-width:1200px;margin:0 auto;padding:64px 30px;}
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:36px;flex-wrap:wrap;gap:16px;}
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:#fff;line-height:1;}
+.sec-sub{font-size:0.75rem;color:var(--muted);margin-top:5px;letter-spacing:0.04em;}
 
-        .book-card { 
-            border: none; border-radius: 20px; transition: all 0.4s ease; 
-            background: white; border: 1px solid rgba(0,0,0,0.05); height: 100%;
-            display: flex; flex-direction: column;
-        }
-        .book-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
-        
-        .book-img-wrapper { 
-            position: relative; overflow: hidden; 
-            border-radius: 20px 20px 0 0;
-            aspect-ratio: 3/4;
-        }
-        .book-img { width: 100%; height: 100%; object-fit: cover; }
-        
-        .buy-btn { 
-            background: var(--dark); border-radius: 10px; padding: 8px 15px;
-            font-weight: 700; transition: all 0.3s; color: white !important;
-            text-decoration: none; font-size: 0.85rem;
-        }
-        .buy-btn:hover { background: var(--primary); }
+.winners-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.winner-card{background:#141920;border:1px solid var(--border);border-radius:8px;padding:22px 20px;display:flex;align-items:flex-start;gap:14px;transition:border-color 0.2s;}
+.winner-card:hover{border-color:rgba(201,168,76,0.3);}
+.winner-crown{width:40px;height:40px;background:rgba(201,168,76,0.1);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:1rem;flex-shrink:0;}
+.winner-name{font-weight:600;color:#fff;font-size:0.88rem;margin-bottom:2px;}
+.winner-comp{font-size:0.72rem;color:var(--muted);}
+.winner-prize{display:inline-block;margin-top:7px;font-size:0.66rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--sage);background:rgba(74,124,89,0.1);border:1px solid rgba(74,124,89,0.2);padding:3px 9px;border-radius:3px;}
 
-        .feature-box { padding: 40px; border-radius: 30px; background: var(--dark); color: white; }
+.filter-bar{display:flex;gap:6px;flex-wrap:wrap;}
+.filter-bar a{font-size:0.72rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;padding:7px 16px;border-radius:5px;text-decoration:none;transition:all 0.2s;border:1px solid var(--border);color:var(--muted);}
+.filter-bar a.active{background:var(--gold);color:#0d0d0d;border-color:var(--gold);}
+.filter-bar a:hover:not(.active){color:#fff;border-color:rgba(255,255,255,0.2);}
 
-        @media (max-width: 768px) {
-            .hero { padding: 60px 15px; border-radius: 0 0 30px 30px; }
-        }
-    </style>
+.books-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:20px;}
+.book-card{background:#141920;border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:all 0.25s;display:flex;flex-direction:column;}
+.book-card:hover{border-color:rgba(201,168,76,0.25);transform:translateY(-4px);}
+.book-cover{aspect-ratio:3/4;overflow:hidden;position:relative;background:#0d0d0d;}
+.book-cover img{width:100%;height:100%;object-fit:cover;transition:transform 0.4s;}
+.book-card:hover .book-cover img{transform:scale(1.05);}
+.book-cover .badge-free{position:absolute;top:10px;right:10px;background:var(--sage);color:#fff;font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:4px 8px;border-radius:3px;}
+.book-info{padding:14px;flex:1;display:flex;flex-direction:column;}
+.book-title{font-size:0.83rem;font-weight:600;color:#fff;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.book-author{font-size:0.72rem;color:var(--muted);margin-bottom:12px;}
+.book-footer{display:flex;align-items:center;justify-content:space-between;margin-top:auto;}
+.book-price{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:700;color:#fff;}
+.book-price.free{color:var(--sage);}
+.btn-book{background:#1c2333;border:1px solid rgba(255,255,255,0.1);color:#fff;font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:6px 12px;border-radius:4px;text-decoration:none;transition:all 0.2s;}
+.btn-book:hover{background:var(--gold);color:#0d0d0d;border-color:var(--gold);}
+.btn-book.read{background:rgba(74,124,89,0.15);border-color:rgba(74,124,89,0.3);color:var(--sage);}
+.btn-book.read:hover{background:var(--sage);color:#fff;}
+
+.why-box{background:#141920;border:1px solid var(--border);border-radius:10px;padding:56px 60px;display:grid;grid-template-columns:1.2fr 1fr;gap:50px;align-items:center;}
+.why-box h2{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:700;color:#fff;margin-bottom:28px;}
+.why-item{display:flex;gap:14px;margin-bottom:20px;}
+.why-icon{width:34px;height:34px;background:rgba(201,168,76,0.1);border-radius:5px;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:0.8rem;flex-shrink:0;}
+.why-text h6{font-size:0.85rem;font-weight:600;color:#fff;margin-bottom:3px;}
+.why-text p{font-size:0.76rem;color:var(--muted);line-height:1.6;}
+.why-img img{width:100%;height:320px;object-fit:cover;border-radius:8px;opacity:0.85;}
+
+.testimonials{background:#0a0a0a;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:64px 0;}
+.testimonials .ti{max-width:1200px;margin:0 auto;padding:0 30px;}
+.tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:36px;}
+.tcard{background:#141920;border:1px solid var(--border);border-radius:8px;padding:26px;}
+.tcard .stars{color:var(--gold);font-size:0.75rem;margin-bottom:14px;}
+.tcard p{font-size:0.82rem;color:rgba(255,255,255,0.5);line-height:1.7;margin-bottom:16px;}
+.tcard .author{font-size:0.76rem;font-weight:600;color:rgba(255,255,255,0.7);}
+
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted);}
+.empty-state i{font-size:2.5rem;margin-bottom:16px;display:block;opacity:0.4;}
+.empty-state h4{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:rgba(255,255,255,0.4);margin-bottom:12px;}
+
+@media(max-width:900px){
+  .books-grid{grid-template-columns:repeat(3,1fr);}
+  .winners-grid{grid-template-columns:1fr 1fr;}
+  .stats-row{grid-template-columns:1fr;}
+  .why-box{grid-template-columns:1fr;padding:32px;}
+  .why-img{display:none;}
+}
+@media(max-width:600px){
+  .books-grid{grid-template-columns:repeat(2,1fr);}
+  .winners-grid{grid-template-columns:1fr;}
+  .tgrid{grid-template-columns:1fr;}
+}
+</style>
 </head>
 <body>
 
-<section class="hero text-center">
-    <div class="container">
-        <h1 class="display-3 fw-bold mb-3 tracking-tight">Unlock a World of <span style="color: var(--primary);">Unlimited</span> Reading</h1>
-        <p class="lead mb-5 text-white-50 mx-auto" style="max-width: 700px;">Join thousands of readers and access your favorite eBooks anywhere, anytime.</p>
-        <form method="GET" action="index.php" class="d-flex justify-content-center">
-            <div class="input-group mb-3" style="max-width: 600px; background: white; border-radius: 15px; padding: 5px;">
-                <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" class="form-control border-0 shadow-none px-4" placeholder="Search books...">
-                <button type="submit" class="btn btn-primary px-4 py-2" style="border-radius: 12px;"><i class="fa-solid fa-magnifying-glass"></i></button>
-            </div>
-        </form>
-    </div>
+<!-- HERO -->
+<section class="hero">
+  <div class="hc">
+    <span class="eyebrow">✦ Pakistan's Digital Library</span>
+    <h1>Unlock a World of<br><em>Unlimited</em> Reading</h1>
+    <p>Join thousands of readers and access your favourite eBooks anywhere, anytime — free and paid.</p>
+    <form method="GET" action="index.php" class="search-form">
+      <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="Search books, authors…">
+      <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+    </form>
+  </div>
 </section>
 
-<div class="container stats-bar">
-    <div class="row g-4">
-        <div class="col-md-4">
-            <div class="stat-card d-flex align-items-center">
-                <div class="cat-icon mb-0 me-3"><i class="fa-solid fa-book"></i></div>
-                <div><h4 class="fw-bold mb-0">12k+</h4><p class="text-muted small mb-0">Total EBooks</p></div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="stat-card d-flex align-items-center">
-                <div class="cat-icon mb-0 me-3"><i class="fa-solid fa-users"></i></div>
-                <div><h4 class="fw-bold mb-0">45k+</h4><p class="text-muted small mb-0">Happy Readers</p></div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="stat-card d-flex align-items-center">
-                <div class="cat-icon mb-0 me-3"><i class="fa-solid fa-star"></i></div>
-                <div><h4 class="fw-bold mb-0">4.9</h4><p class="text-muted small mb-0">Average Rating</p></div>
-            </div>
-        </div>
-    </div>
+<!-- STATS -->
+<div class="stats-row">
+  <div class="stat-box">
+    <div class="stat-icon"><i class="fa-solid fa-book"></i></div>
+    <div><div class="stat-num">12k+</div><div class="stat-lbl">Total EBooks</div></div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+    <div><div class="stat-num">45k+</div><div class="stat-lbl">Happy Readers</div></div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-icon"><i class="fa-solid fa-star"></i></div>
+    <div><div class="stat-num">4.9</div><div class="stat-lbl">Average Rating</div></div>
+  </div>
 </div>
 
-<section class="container mt-5 pt-4">
-    <div class="d-flex justify-content-between align-items-end mb-4">
-        <div>
-            <h2 class="fw-bold mb-0"> Hall of Fame</h2>
-            <p class="text-muted">Our latest competition champions</p>
-        </div>
+<!-- HALL OF FAME -->
+<section class="sec">
+  <div class="sec-head">
+    <div>
+      <div class="sec-title">🏆 Hall of Fame</div>
+      <div class="sec-sub">Our latest competition champions</div>
     </div>
-    
-    <div class="row g-4">
-        <?php 
-        // Sahi Column 'u.name' ke sath query
-        $winner_query = "SELECT c.title as comp_title, c.prize, u.name 
-                         FROM competitions c 
-                         JOIN users u ON c.winner_id = u.id 
-                         WHERE c.winner_id IS NOT NULL 
-                         ORDER BY c.id DESC LIMIT 3";
-        
-        $winner_res = mysqli_query($conn, $winner_query);
-
-        if($winner_res && mysqli_num_rows($winner_res) > 0):
-            while($w = mysqli_fetch_assoc($winner_res)):
-        ?>
-        <div class="col-md-4">
-            <div class="stat-card border-0 shadow-sm" style="background: linear-gradient(145deg, #ffffff, #f0f4ff); border-left: 5px solid #f1c40f !important; border-radius: 20px; padding: 25px;">
-                <div class="d-flex align-items-center">
-                    <div class="cat-icon bg-warning bg-opacity-10 text-warning me-3" style="width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; min-width: 50px;">
-                        <i class="fa-solid fa-crown"></i>
-                    </div>
-                    <div>
-                        <h6 class="fw-bold mb-1 text-dark"><?php echo htmlspecialchars($w['name']); ?></h6>
-                        <p class="small text-muted mb-0"><?php echo htmlspecialchars($w['comp_title']); ?></p>
-                        <span class="badge bg-success bg-opacity-10 text-success mt-1" style="font-size: 0.7rem;">
-                            Prize: ₹<?php echo htmlspecialchars($w['prize']); ?>
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <?php endwhile; else: ?>
-            <div class="col-12">
-                <div class="p-4 text-center rounded-4 border border-dashed text-muted bg-white bg-opacity-50">
-                    <i class="fa-solid fa-trophy mb-2 fa-2x"></i>
-                    <p class="small mb-0">Winners will be announced soon! Stay tuned.</p>
-                </div>
-            </div>
-        <?php endif; ?>
+    <a href="winners.php" style="font-size:0.72rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;text-transform:uppercase;font-weight:700;">View All →</a>
+  </div>
+  <div class="winners-grid">
+    <?php 
+    $winner_query = "SELECT c.title as comp_title, c.prize, u.name 
+                     FROM competitions c 
+                     JOIN users u ON c.winner_id = u.id 
+                     WHERE c.winner_id IS NOT NULL 
+                     ORDER BY c.id DESC LIMIT 3";
+    $winner_res = mysqli_query($conn, $winner_query);
+    if($winner_res && mysqli_num_rows($winner_res) > 0):
+      while($w = mysqli_fetch_assoc($winner_res)): ?>
+    <div class="winner-card">
+      <div class="winner-crown"><i class="fa-solid fa-crown"></i></div>
+      <div>
+        <div class="winner-name"><?php echo htmlspecialchars($w['name']); ?></div>
+        <div class="winner-comp"><?php echo htmlspecialchars($w['comp_title']); ?></div>
+        <span class="winner-prize">Prize: <?php echo htmlspecialchars($w['prize']); ?></span>
+      </div>
     </div>
+    <?php endwhile; else: ?>
+    <div class="empty-state" style="grid-column:1/-1;">
+      <i class="fa-solid fa-trophy"></i>
+      <h4>Winners will be announced soon!</h4>
+    </div>
+    <?php endif; ?>
+  </div>
 </section>
 
-
-<div class="container my-5 pt-5" id="featured-section">
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-5 gap-3">
-        <h2 class="fw-bold mb-0">Featured Books</h2>
-        <div class="btn-group shadow-sm rounded-pill p-1 bg-white">
-            <a href="index.php?filter=all#featured-section" class="btn btn-sm rounded-pill px-3 <?php echo ($filter == 'all') ? 'btn-dark' : 'text-muted'; ?>">All</a>
-            <a href="index.php?filter=new#featured-section" class="btn btn-sm rounded-pill px-3 <?php echo ($filter == 'new') ? 'btn-dark' : 'text-muted'; ?>">New</a>
-            <a href="index.php?filter=free#featured-section" class="btn btn-sm rounded-pill px-3 <?php echo ($filter == 'free') ? 'btn-dark' : 'text-muted'; ?>">Free</a>
-            <a href="index.php?filter=paid#featured-section" class="btn btn-sm rounded-pill px-3 <?php echo ($filter == 'paid') ? 'btn-dark' : 'text-muted'; ?>">Paid</a>
-        </div>
+<!-- FEATURED BOOKS -->
+<section class="sec" style="padding-top:0;" id="featured-section">
+  <div class="sec-head">
+    <div>
+      <div class="sec-title">Featured Books</div>
+      <div class="sec-sub">Hand-picked titles for every reader</div>
     </div>
-
-    <div class="row g-4 row-cols-2 row-cols-md-3 row-cols-lg-4">
-        <?php
-        $query = "SELECT * FROM books WHERE 1=1";
-        if ($search) { $query .= " AND (title LIKE '%$search%' OR author LIKE '%$search%')"; }
-        if ($filter == 'free') { $query .= " AND price <= 0"; } 
-        elseif ($filter == 'paid') { $query .= " AND price > 0"; }
-        $query .= ($filter == 'new') ? " ORDER BY id DESC LIMIT 12" : " ORDER BY id DESC";
-        
-        $result = mysqli_query($conn, $query);
-        if(mysqli_num_rows($result) > 0):
-            while($row = mysqli_fetch_assoc($result)):
-                $isFree = ($row['price'] <= 0);
-        ?>
-        <div class="col d-flex">
-            <div class="book-card w-100">
-                <div class="book-img-wrapper">
-                    <?php if($isFree): ?>
-                        <div class="badge bg-success position-absolute" style="top:12px; right:12px; z-index:5; font-size: 0.7rem;">FREE</div>
-                    <?php endif; ?>
-                    <img src="<?php echo $image_path . $row['book_image']; ?>" class="book-img" alt="Cover">
-                </div>
-
-                <div class="card-body p-3 d-flex flex-column">
-                    <h6 class="fw-bold text-dark mb-1 text-truncate" title="<?php echo htmlspecialchars($row['title']); ?>">
-                        <?php echo htmlspecialchars($row['title']); ?>
-                    </h6>
-                    <p class="text-muted small mb-3 text-truncate"><?php echo htmlspecialchars($row['author']); ?></p>
-                    
-                    <div class="mt-auto d-flex justify-content-between align-items-center">
-                        <span class="fw-bold <?php echo $isFree ? 'text-success' : 'text-dark'; ?>">
-                            <?php echo $isFree ? 'FREE' : '₹' . $row['price']; ?>
-                        </span>
-                        
-                        <a href="<?php echo $isFree ? 'view_book.php?id='.$row['id'] : 'order.php?book_id='.$row['id']; ?>" 
-                           class="buy-btn text-decoration-none">
-                            <?php echo $isFree ? 'Read' : 'Buy'; ?>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <?php endwhile; else: ?>
-            <div class="col-12 text-center py-5">
-                <i class="fa-solid fa-magnifying-glass fa-3x text-muted mb-3"></i>
-                <h3 class="text-muted">No books found.</h3>
-                <a href="index.php" class="btn btn-primary rounded-pill mt-3">Reset Filters</a>
-            </div>
-        <?php endif; ?>
+    <div class="filter-bar">
+      <a href="index.php?filter=all#featured-section" class="<?php echo ($filter=='all')?'active':''; ?>">All</a>
+      <a href="index.php?filter=new#featured-section" class="<?php echo ($filter=='new')?'active':''; ?>">New</a>
+      <a href="index.php?filter=free#featured-section" class="<?php echo ($filter=='free')?'active':''; ?>">Free</a>
+      <a href="index.php?filter=paid#featured-section" class="<?php echo ($filter=='paid')?'active':''; ?>">Paid</a>
     </div>
+  </div>
+  <div class="books-grid">
+    <?php
+    $query = "SELECT * FROM books WHERE 1=1";
+    if ($search) { $query .= " AND (title LIKE '%$search%' OR author LIKE '%$search%')"; }
+    if ($filter == 'free') { $query .= " AND price <= 0"; } 
+    elseif ($filter == 'paid') { $query .= " AND price > 0"; }
+    $query .= ($filter == 'new') ? " ORDER BY id DESC LIMIT 10" : " ORDER BY id DESC";
+    $result = mysqli_query($conn, $query);
+    if(mysqli_num_rows($result) > 0):
+      while($row = mysqli_fetch_assoc($result)):
+        $isFree = ($row['price'] <= 0);
+    ?>
+    <div class="book-card">
+      <div class="book-cover">
+        <?php if($isFree): ?><span class="badge-free">Free</span><?php endif; ?>
+        <img src="<?php echo $image_path . $row['book_image']; ?>" alt="<?php echo htmlspecialchars($row['title']); ?>" onerror="this.src='../assets/img/default-cover.jpg'">
+      </div>
+      <div class="book-info">
+        <div class="book-title" title="<?php echo htmlspecialchars($row['title']); ?>"><?php echo htmlspecialchars($row['title']); ?></div>
+        <div class="book-author">By <?php echo htmlspecialchars($row['author']); ?></div>
+        <div class="book-footer">
+          <div class="book-price <?php echo $isFree?'free':''; ?>"><?php echo $isFree ? 'Free' : 'Rs. '.$row['price']; ?></div>
+          <a href="<?php echo $isFree ? 'view_book.php?id='.$row['id'] : 'order.php?book_id='.$row['id']; ?>" class="btn-book <?php echo $isFree?'read':''; ?>">
+            <?php echo $isFree ? 'Read' : 'Buy'; ?>
+          </a>
+        </div>
+      </div>
+    </div>
+    <?php endwhile; else: ?>
+    <div class="empty-state" style="grid-column:1/-1;">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <h4>No books found.</h4>
+      <a href="index.php" style="display:inline-block;margin-top:12px;padding:10px 24px;background:var(--gold);color:#0d0d0d;border-radius:5px;text-decoration:none;font-size:0.8rem;font-weight:700;">Reset Filters</a>
+    </div>
+    <?php endif; ?>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section class="sec" style="padding-top:0;">
+  <div class="why-box">
+    <div>
+      <h2>Why choose<br>E-Library?</h2>
+      <div class="why-item">
+        <div class="why-icon"><i class="fa-solid fa-bolt"></i></div>
+        <div class="why-text"><h6>Instant Access</h6><p>Get your PDF right after purchase — no waiting, no delays.</p></div>
+      </div>
+      <div class="why-item">
+        <div class="why-icon"><i class="fa-solid fa-mobile-screen"></i></div>
+        <div class="why-text"><h6>Read Anywhere</h6><p>Works on mobile, tablet and desktop seamlessly.</p></div>
+      </div>
+      <div class="why-item">
+        <div class="why-icon"><i class="fa-solid fa-trophy"></i></div>
+        <div class="why-text"><h6>Essay Competitions</h6><p>Participate in live competitions and win exciting prizes.</p></div>
+      </div>
+    </div>
+    <div class="why-img">
+      <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&q=70" alt="Reading">
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<div class="testimonials">
+  <div class="ti">
+    <div class="sec-head" style="margin-bottom:0;">
+      <div>
+        <div class="sec-title">What our readers say</div>
+        <div class="sec-sub">Trusted by thousands across Pakistan</div>
+      </div>
+    </div>
+    <div class="tgrid">
+      <div class="tcard">
+        <div class="stars">★★★★★</div>
+        <p>"The best place to find niche tech books. Selection is incredible and delivery was fast."</p>
+        <div class="author">— Rahul Verma</div>
+      </div>
+      <div class="tcard">
+        <div class="stars">★★★★★</div>
+        <p>"So easy to buy and read. Love the dark interface, very easy on the eyes at night."</p>
+        <div class="author">— Priya Sharma</div>
+      </div>
+      <div class="tcard">
+        <div class="stars">★★★★★</div>
+        <p>"Free section is a lifesaver for students. Participated in a competition too, great experience!"</p>
+        <div class="author">— Aman Gupta</div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<section class="container mb-5 pb-5">
-    <div class="feature-box shadow-lg">
-        <div class="row align-items-center">
-            <div class="col-md-6 mb-4 mb-md-0">
-                <h2 class="display-6 fw-bold mb-4">Why choose EBook Library?</h2>
-                <div class="d-flex mb-3">
-                    <div class="me-3 text-primary"><i class="fa-solid fa-circle-check"></i></div>
-                    <p class="mb-0">Instant access right after purchase.</p>
-                </div>
-                <div class="d-flex mb-3">
-                    <div class="me-3 text-primary"><i class="fa-solid fa-circle-check"></i></div>
-                    <p class="mb-0">Read on any device - Phone or PC.</p>
-                </div>
-                <button class="btn btn-primary mt-4 px-4 py-2 rounded-pill fw-bold">Explore All</button>
-            </div>
-            <div class="col-md-6 text-center">
-                <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=500&q=80" class="img-fluid rounded-4 shadow" alt="Reading">
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="bg-white py-5">
-    <div class="container text-center py-4">
-        <h2 class="fw-bold mb-5">What our readers say</h2>
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="p-4 border rounded-4 h-100">
-                    <div class="text-warning mb-2"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-                    <p class="small text-muted italic">"The best place to find niche tech books."</p>
-                    <h6 class="fw-bold mb-0">- Rahul Verma</h6>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="p-4 border rounded-4 h-100">
-                    <div class="text-warning mb-2"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-                    <p class="small text-muted italic">"So easy to buy and read. Love it!"</p>
-                    <h6 class="fw-bold mb-0">- Priya Sharma</h6>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="p-4 border rounded-4 h-100">
-                    <div class="text-warning mb-2"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-                    <p class="small text-muted italic">"Free section is a lifesaver for students."</p>
-                    <h6 class="fw-bold mb-0">- Aman Gupta</h6>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<?php include("footer.php")?>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<?php include("footer.php"); ?>
 </body>
 </html>

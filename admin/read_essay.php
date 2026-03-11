@@ -1,42 +1,34 @@
 <?php
 $file = $_GET['file'];
 $path = "../uploads/essays/" . $file;
-
-if (!file_exists($path)) {
-    die("Error: File not found.");
-}
-
+if (!file_exists($path)) { die("Error: File not found."); }
 $content = file_get_contents($path);
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>
     <title>Reading Submission</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        body { background: #e2e8f0; padding: 50px 0; }
-        .essay-paper {
-            max-width: 800px;
-            margin: auto;
-            background: white;
-            padding: 60px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            border-radius: 5px;
-            min-height: 100vh;
-            white-space: pre-wrap; /* Lines break automatically */
-            font-size: 1.2rem;
-            line-height: 1.8;
-            font-family: 'Georgia', serif;
-        }
+        :root{--ink:#0d0d0d;--ink-soft:#111827;--surface:#1c2333;--border:rgba(255,255,255,0.07);--gold:#c9a84c;--text:#f0ece4;--muted:rgba(255,255,255,0.35);}
+        *{box-sizing:border-box;margin:0;padding:0;}
+        body{background:var(--ink-soft);font-family:'DM Sans',sans-serif;min-height:100vh;padding:36px 20px;}
+        .back-bar{max-width:700px;margin:0 auto 22px;}
+        .back-btn{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--muted);text-decoration:none;font-size:0.75rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:7px 14px;border-radius:4px;transition:all 0.2s;}
+        .back-btn:hover{color:#fff;border-color:var(--gold);}
+        .essay-paper{max-width:700px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:52px;position:relative;}
+        .essay-paper::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:linear-gradient(to bottom,var(--gold),transparent);border-radius:7px 0 0 7px;}
+        .essay-file{font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:22px;display:block;}
+        .essay-content{font-family:'Cormorant Garamond',Georgia,serif;font-size:1.12rem;line-height:1.9;color:rgba(240,236,228,0.82);white-space:pre-wrap;}
     </style>
 </head>
 <body>
-    <div class="container text-center mb-4">
-        <a href="view_submissions.php" class="btn btn-dark btn-sm">← Back to List</a>
+    <div class="back-bar">
+        <a href="view_submissions.php" class="back-btn"><i style="font-size:0.7rem;">←</i> Back to List</a>
     </div>
     <div class="essay-paper">
-        <?= htmlspecialchars($content) ?>
+        <span class="essay-file">📄 <?php echo htmlspecialchars($file); ?></span>
+        <div class="essay-content"><?php echo htmlspecialchars($content); ?></div>
     </div>
 </body>
 </html>

@@ -1,6 +1,6 @@
 <?php
 session_start();
-include("../config/db.php"); // Database connection
+include("../config/db.php");
 
 if (!isset($_SESSION['user_id'])) {
     die("Access Denied! Please login.");
@@ -8,57 +8,50 @@ if (!isset($_SESSION['user_id'])) {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user_id = $_SESSION['user_id'];
-    
-    // YAHAN FIX KIYA HAI: Ab ye hardcoded 1 nahi hai.
-    // $_POST['comp_id'] se dynamic ID aayegi.
     $competition_id = isset($_POST['comp_id']) ? mysqli_real_escape_string($conn, $_POST['comp_id']) : 1; 
-    
-    // Essay content ko sanitize karna zaroori hai
     $essay_content = mysqli_real_escape_string($conn, $_POST['essay']);
-
-    // 1. Essay ko file mein convert karna
     $filename = "essay_" . $user_id . "_" . time() . ".txt";
     $target_dir = "../uploads/essays/";
-    
-    if (!is_dir($target_dir)) {
-        mkdir($target_dir, 0777, true);
-    }
-
+    if (!is_dir($target_dir)) { mkdir($target_dir, 0777, true); }
     $file_path = $target_dir . $filename;
-
-    // File ke andar asli essay content likhna (yahan sanitize wala nahi, original content)
     $original_essay_content = $_POST['essay'];
 
     if (file_put_contents($file_path, $original_essay_content)) {
-        
-        // 2. Database mein record insert karna
         $query = "INSERT INTO submissions (user_id, competition_id, file, submitted_at) 
                   VALUES ('$user_id', '$competition_id', '$filename', NOW())";
-
         if (mysqli_query($conn, $query)) {
-            // Success Message UI
+            // SUCCESS
             ?>
-            <!DOCTYPE html>
-            <html lang='en'>
-            <head>
-                <meta charset="UTF-8">
-                <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css' rel='stylesheet'>
-                <style>
-                    body { background: #0f172a; height: 100vh; display: flex; align-items: center; justify-content: center; color: white; font-family: 'Segoe UI', sans-serif; }
-                    .card { background: #1e293b; border-radius: 20px; padding: 40px; text-align: center; border: 1px solid #334155; max-width: 500px; }
-                    .icon-box { font-size: 50px; color: #10b981; margin-bottom: 20px; }
-                </style>
-            </head>
-            <body>
-                <div class='card shadow-lg'>
-                    <div class="icon-box">✓</div>
-                    <h1 class='text-success mb-3'>Submission Received</h1>
-                    <p class='text-white-50'>Your essay has been successfully submitted for the competition.</p>
-                    <p class="small text-muted">File: <?= $filename ?></p>
-                    <a href='index.php' class='btn btn-primary px-5 py-2 mt-3 shadow-sm'>Return to Home</a>
-                </div>
-            </body>
-            </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Essay Submitted | E-Library</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=DM+Sans:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:#0d0d0d;color:#f0ece4;font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:30px;}
+.wrap{max-width:480px;width:100%;text-align:center;}
+.check-icon{width:80px;height:80px;background:rgba(74,124,89,0.1);border:1px solid rgba(74,124,89,0.25);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:2rem;color:#6abd7c;}
+.wrap h1{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:700;color:#fff;margin-bottom:10px;}
+.wrap p{font-size:0.82rem;color:rgba(255,255,255,0.4);line-height:1.75;margin-bottom:28px;}
+.file-info{background:#141920;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:14px 18px;margin-bottom:24px;font-size:0.75rem;color:rgba(255,255,255,0.3);font-family:monospace;}
+.btn-home{display:inline-flex;align-items:center;gap:8px;background:#c9a84c;color:#0d0d0d;font-size:0.78rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:12px 28px;border-radius:6px;text-decoration:none;transition:background 0.2s;}
+.btn-home:hover{background:#e8c96a;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="check-icon"><i class="fa-solid fa-check"></i></div>
+  <h1>Submission Received!</h1>
+  <p>Your essay has been successfully submitted for the competition. Good luck!</p>
+  <div class="file-info">📄 <?php echo $filename; ?></div>
+  <a href="index.php" class="btn-home"><i class="fa-solid fa-house"></i> Return to Home</a>
+</div>
+</body>
+</html>
             <?php
         } else {
             echo "Database Error: " . mysqli_error($conn);
