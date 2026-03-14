@@ -4,27 +4,33 @@ session_start();
 include("../config/db.php");
 
 $msg = "";
+$error_type = ""; // 'email' ya 'password' ki nishandehi ke liye
 
 if (isset($_POST['login'])) {
     $email    = mysqli_real_escape_string($conn, $_POST['email']);
     $password = md5($_POST['password']);
     
-    $sql      = "SELECT * FROM users WHERE email='$email' AND password='$password'";
-    $result   = mysqli_query($conn, $sql);
+    // 1. Pehle check karein ke kya email database mein mojud hai
+    $check_email = mysqli_query($conn, "SELECT * FROM users WHERE email='$email'");
     
-    if (mysqli_num_rows($result) > 0) {
-        $user = mysqli_fetch_assoc($result);
-        $_SESSION['user_id']   = $user['id'];
-        $_SESSION['user_name'] = $user['name'];
-        
-        // Try PHP redirect first
-        header("Location: index.php");
-        
-        // If PHP redirect fails because of the header error, this JS will run:
-        echo "<script>window.location.href='index.php';</script>";
-        exit();
+    if (mysqli_num_rows($check_email) == 0) {
+        $msg = "Email address not found! Kindly register first.";
+        $error_type = "email";
     } else {
-        $msg = "Invalid Email or Password!";
+        // 2. Agar email mil gayi, toh password check karein
+        $user = mysqli_fetch_assoc($check_email);
+        if ($user['password'] !== $password) {
+            $msg = "Incorrect password. Please try again!";
+            $error_type = "password";
+        } else {
+            // Sab sahi hai, toh session set karein aur redirect karein
+            $_SESSION['user_id']   = $user['id'];
+            $_SESSION['user_name'] = $user['name'];
+            
+            header("Location: index.php");
+            echo "<script>window.location.href='index.php';</script>";
+            exit();
+        }
     }
 }
 ?>
@@ -42,6 +48,7 @@ if (isset($_POST['login'])) {
   --gold:#c9a84c;--gold-light:#e8c96a;
   --ink:#0d0d0d;--surface:#141920;--surface2:#1c2333;
   --border:rgba(255,255,255,0.08);--muted:rgba(255,255,255,0.38);
+  --error: #f87171;
 }
 html,body{height:100%;}
 body{
@@ -67,8 +74,14 @@ body{
 .r-title{font-family:'Cormorant Garamond',serif;font-size:2.1rem;font-weight:700;color:#fff;margin-bottom:5px;}
 .alert-err{background:rgba(224,92,92,0.07);border:1px solid rgba(224,92,92,0.18);color:#e05c5c;font-size:0.77rem;padding:11px 13px;border-radius:7px;margin-bottom:20px;}
 .fg{position:relative;margin-bottom:18px;}
-.fg .fi{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:21px 16px 8px 44px;color:#fff;font-size:0.85rem;outline:none;}
+.fg .fi{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:21px 16px 8px 44px;color:#fff;font-size:0.85rem;outline:none;transition: all 0.2s;}
 .fg .fi:focus{border-color:var(--gold);}
+
+/* Error State Styling */
+.fg .fi.error-border { border-color: var(--error) !important; box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.05); }
+.error-border ~ .fl { color: var(--error) !important; }
+.error-border ~ .fic { color: var(--error) !important; opacity: 0.6; }
+
 .fg .fl{position:absolute;left:44px;top:50%;transform:translateY(-50%);font-size:0.82rem;color:rgba(255,255,255,0.28);pointer-events:none;transition:all 0.22s ease;}
 .fg .fi:focus ~ .fl, .fg .fi:not(:placeholder-shown) ~ .fl{top:9px;transform:none;font-size:0.6rem;color:var(--gold);}
 .fg .fic{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.2);font-size:0.78rem;}
@@ -105,14 +118,21 @@ body{
     <form method="POST">
       <div class="fg">
         <i class="fic fa-regular fa-envelope"></i>
-        <input type="email" name="email" class="fi" placeholder=" " required>
+        <input type="email" name="email" 
+               class="fi <?php echo ($error_type == 'email') ? 'error-border' : ''; ?>" 
+               value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>"
+               placeholder=" " required>
         <label class="fl">Email Address</label>
       </div>
+
       <div class="fg">
         <i class="fic fa-solid fa-lock"></i>
-        <input type="password" name="password" class="fi" placeholder=" " required>
+        <input type="password" name="password" 
+               class="fi <?php echo ($error_type == 'password') ? 'error-border' : ''; ?>" 
+               placeholder=" " required>
         <label class="fl">Password</label>
       </div>
+
       <button type="submit" name="login" class="btn-go">Sign In →</button>
     </form>
   </div>

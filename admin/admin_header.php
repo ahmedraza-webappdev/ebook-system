@@ -198,10 +198,5 @@ if(!isset($page_subtitle)) $page_subtitle = "E-Book Admin Panel";
             </div>
         </div>
     </div>
-    <li class="nav-item">
-    <a href="manage_winners.php" class="nav-link">
-        <i class="fa-solid fa-trophy" style="color:#f59e0b; margin-right:8px;"></i>
-        <span>Manage Winners</span>
-    </a>
-</li>
+    
 <!-- PAGE CONTENT STARTS BELOW -->

@@ -31,16 +31,16 @@ include("admin_header.php");
 </div>
 
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
-    <!-- Quick Actions -->
     <div class="section-card">
         <div class="section-header"><h3><i class="fa-solid fa-bolt" style="color:var(--gold);margin-right:8px;font-size:0.8rem;"></i>Quick Actions</h3></div>
         <div style="padding:18px;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
             <?php
+            // Maine yahan se 'Submissions' ya kisi bhi winner related action ko hata diya hai
             $actions = [
                 ['href'=>'upload_book.php','icon'=>'fa-upload','title'=>'Upload Book','sub'=>'Add to library','color'=>'#c9a84c','bg'=>'rgba(201,168,76,0.08)'],
                 ['href'=>'manage_competitions.php','icon'=>'fa-trophy','title'=>'Competition','sub'=>'Manage events','color'=>'#4a7a59','bg'=>'rgba(74,122,89,0.08)'],
                 ['href'=>'view_users.php','icon'=>'fa-users','title'=>'View Users','sub'=>'Community','color'=>'#818cf8','bg'=>'rgba(99,102,241,0.08)'],
-                ['href'=>'view_submissions.php','icon'=>'fa-file-lines','title'=>'Submissions','sub'=>'Essay entries','color'=>'#f59e0b','bg'=>'rgba(245,158,11,0.08)'],
+                // Winner/Submission link removed from here
             ];
             foreach($actions as $a): ?>
             <a href="<?php echo $a['href']; ?>" style="background:<?php echo $a['bg'];?>;border:1px solid <?php echo str_replace('0.08','0.15',$a['bg']);?>;border-radius:10px;padding:16px;text-decoration:none;display:block;transition:0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
@@ -52,7 +52,6 @@ include("admin_header.php");
         </div>
     </div>
 
-    <!-- Recent Books -->
     <div class="section-card">
         <div class="section-header">
             <h3><i class="fa-solid fa-clock-rotate-left" style="color:var(--gold);margin-right:8px;font-size:0.8rem;"></i>Recent Books</h3>

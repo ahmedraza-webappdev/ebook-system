@@ -3,7 +3,8 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
 ?>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+<link rel="icon" type="image/png" href="ebook.png">
+<title>Book-Astra | Your Premium Book Store</title>
 <style>
 /* PREMIUM DARK THEME VARIABLES */
 :root {
@@ -118,8 +119,9 @@ body { margin: 0; font-family: 'DM Sans', sans-serif; background: var(--bg-dark)
 
 <nav class="e-nav">
   <div class="nav-inner">
-    <a href="index.php" class="brand">📚 <span>E-Library</span></a>
-
+  <a href="index.php" class="brand" style="display: flex; align-items: center;">
+    <img src="file.svg" alt="E-Library" style="height: 50px; width: auto; display: block;">
+</a>
     <div class="nav-links">
         <a href="index.php">Home</a>
         <a href="index.php?filter=free">Free Books</a>
