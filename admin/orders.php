@@ -6,7 +6,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Logic: Agar session nahi hai to login par bhej do
 // Note: Check karein ke aapne login page par $_SESSION['users'] hi set kiya hai ya $_SESSION['admin']
-if(!isset($_SESSION['users'])){ 
+if(!isset($_SESSION['admin'])){ 
     header("Location: admin_login.php"); 
     exit(); 
 }
@@ -38,8 +38,10 @@ $result = mysqli_query($conn,$sql);
         <?php if(mysqli_num_rows($result)>0): ?>
         <?php while($row=mysqli_fetch_assoc($result)): ?>
             <tr>
-                <td style="font-size:0.75rem;font-weight:800;color:#94a3b8;">#ORD-<?php echo str_pad($row['id'],3,'0',STR_PAD_LEFT); ?></td>
-                <td style="font-weight:700;color:#1e293b;font-size:0.875rem;"><?php echo htmlspecialchars($row['title']); ?></td>
+                <td style="font-size:0.75rem;font-weight:800;color:#f1f5f9;">#ORD-<?php echo str_pad($row['id'],3,'0',STR_PAD_LEFT); ?></td>
+               <td style="font-weight:700; color: #f1f5f9; font-size: 0.875rem;">
+    <?php echo htmlspecialchars($row['title']); ?>
+</td>
                 <td><span class="badge badge-category"><?php echo htmlspecialchars($row['order_type']); ?></span></td>
                 <td>
                     <?php if(strtolower($row['payment_status']) == 'paid'): ?>
